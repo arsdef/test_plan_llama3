@@ -42,3 +42,6 @@ def save_to_git(test_plan):
     repo.git.add(all=True)
     repo.index.commit("Added new TestLink plan")
     repo.remote(name='origin').push()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
