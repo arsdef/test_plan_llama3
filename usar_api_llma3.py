@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 app = FastAPI()
 
 # Rutas de configuración
-OLLAMA3_API_URL = "http://ollama3/api/generate_test_plan"
+llama3_api_url = "https://api.llama3.com/v1/process"
 GIT_REPO_URL = "https://github.com/usuario/testlink-repo.git"
 LOCAL_PATH = "/tmp/testlink-repo"
 
@@ -18,14 +18,8 @@ async def upload_cases(file: UploadFile):
     content = await file.read()
 
     # Enviar el archivo a la API de Ollama3 para generar el plan de pruebas
-    response = requests.post(OLLAMA3_API_URL, files={"file": content})
-    
-    if response.status_code == 200:
-        test_plan = generate_testlink_xml(content)
-        save_to_git(test_plan)
-        return {"message": "Plan de pruebas generado y subido a Git exitosamente."}
-    else:
-        return {"error": "Error al generar el plan de pruebas"}
+    response = llama3_process_use_cases(file)
+
 
 # Función para generar el XML de TestLink
 def generate_testlink_xml(json_data):
@@ -64,6 +58,35 @@ def save_to_git(test_plan):
     repo.git.add(all=True)
     repo.index.commit("Added new TestLink plan")
     repo.remote(name='origin').push()
+import requests
+
+def llama3_process_use_cases(file):
+    # URL de la API de Llama3
+    
+
+    # Cabeceras para la autenticación y tipo de contenido
+    headers = {
+        'Authorization': 'Bearer your_api_key',
+        'Content-Type': 'application/json'
+    }
+
+    # Datos del archivo que se sube
+    data = {
+        'file': file.read(),  # Lee el contenido del archivo y lo envía en el cuerpo
+        'options': {
+            'use_case_format': 'structured',  # Otras opciones según la API de Llama3
+            'output_format': 'test_case_plan'
+        }
+    }
+
+    # Hacer la solicitud POST a la API de Llama3
+    response = requests.post(llama3_api_url, headers=headers, json=data)
+
+    # Manejo de la respuesta
+    if response.status_code == 200:
+        return response.json()  # Devuelve la respuesta en formato JSON
+    else:
+        raise Exception(f"Error en la llamada a Llama3 API: {response.status_code} {response.text}")
 
 
 if __name__ == '__main__':
