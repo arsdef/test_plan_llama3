@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 app = FastAPI()
 
 # Rutas de configuración
-llama3_api_url = "https://api.llama3.com/v1/process"
+LLAMA3_API_URL = "https://api.llama3.com/v1/process"
 GIT_REPO_URL = "https://github.com/usuario/testlink-repo.git"
 LOCAL_PATH = "/tmp/testlink-repo"
 
@@ -80,7 +80,7 @@ def llama3_process_use_cases(file):
     }
 
     # Hacer la solicitud POST a la API de Llama3
-    response = requests.post(llama3_api_url, headers=headers, json=data)
+    response = requests.post(LLAMA3_API_URL, headers=headers, json=data)
 
     # Manejo de la respuesta
     if response.status_code == 200:
